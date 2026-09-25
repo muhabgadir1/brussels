@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Brussels Bedroom Planner</title>
+<meta name="description" content="To-scale plan of a 270 × 370 cm bedroom. Move furniture, doors, windows and radiators and see what fits.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Brussels Bedroom Planner">
+<meta property="og:description" content="To-scale plan of a 270 × 370 cm bedroom. Move furniture, doors, windows and radiators and see what fits.">
+<meta property="og:image" content="https://muhabgadir1.github.io/brussels/preview.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&display=swap">
@@ -1419,8 +1425,10 @@ function renderSheet() {
       <p class="note">Designs save automatically in this browser.${storageGet() === null && !storageSet(JSON.stringify(store)) ? " Storage is blocked here, so they'll be lost when you close the page." : ""}</p>`;
   } else if (sheetKind === "share") {
     const code = encodeDesign(design);
-    body.innerHTML = `<p class="note">Send this code to anyone with the planner. They paste it under Designs → “Got a code from someone?”.</p>
-      <textarea id="shareCode" readonly>${code}</textarea><div class="row" style="margin-top:8px"><button class="btn primary" id="copyCode">Copy code</button></div>`;
+    body.innerHTML = (canLink() ? `<p class="note">Send this link. It opens “${esc(design.name)}” for them, and their changes won't affect yours.</p>
+      <textarea id="shareLink" readonly>${esc(shareURL(code))}</textarea><div class="row" style="margin-top:8px"><button class="btn primary" id="sendLink">Share link</button></div>
+      <div class="sec">Or as a code</div>` : `<p class="note">Send this code to anyone with the planner. They paste it under Designs → “Got a code from someone?”.</p>`)
+      + `<textarea id="shareCode" readonly>${code}</textarea><div class="row" style="margin-top:8px"><button class="btn ${canLink() ? "" : "primary"}" id="copyCode">Copy code</button></div>`;
   } else if (sheetKind === "issues") {
     const L = analysis.list;
     body.innerHTML = L.length ? `<div class="list">${L.map(i => { const it = design.items.find(x => x.id === i.id); return `<button class="li" data-sel="${i.id}"><span class="issue-li"><span class="dot" style="background:var(--${i.sev})"></span><span class="t"><b>${esc(it ? it.name : "")}</b><small>${esc(i.text)}</small></span></span></button>`; }).join("")}</div>
@@ -1476,6 +1484,13 @@ $("sheetBody").addEventListener("click", e => {
     if (!d) { toast("That code didn't work. Copy the whole thing."); return; }
     openDesign(newDesign(d.name, d.items, d.room)); closeSheet(); toast(`Opened ${d.name}`); return;
   }
+  if (b.id === "sendLink") {
+    const url = $("shareLink").value, done = () => toast("Link copied");
+    const copy = () => { try { navigator.clipboard.writeText(url).then(done, () => { $("shareLink").select(); toast("Selected. Copy it from here."); }); } catch (err) { $("shareLink").select(); } };
+    if (navigator.share) navigator.share({ title: design.name, text: `${design.name}: bedroom layout`, url }).catch(err => { if (err && err.name !== "AbortError") copy(); });
+    else copy();
+    return;
+  }
   if (b.id === "copyCode") {
     const ta = $("shareCode");
     const done = () => toast("Code copied");
@@ -1527,6 +1542,21 @@ function decodeDesign(code) {
   } catch (e) { return null; }
 }
 
+// A plain web page (not framed inside another app) can hand out links with the design in the #hash.
+const canLink = () => /^https?:$/.test(location.protocol) && window.top === window;
+const shareURL = code => location.origin + location.pathname + "#" + code;
+function openFromHash() {
+  const m = /^#(BBP1-[A-Za-z0-9_-]+)$/.exec(location.hash);
+  if (!m) return false;
+  try { window.history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  const d = decodeDesign(m[1]);
+  if (!d) { toast("That design link is incomplete. Ask for it again."); return false; }
+  openDesign(newDesign(d.name, d.items, d.room));
+  toast(`Opened “${d.name}”. It's saved in your Designs.`);
+  return true;
+}
+window.addEventListener("hashchange", () => { closeSheet(); openFromHash(); });
+
 /* ---------- wiring ---------- */
 $("addBtn").onclick = () => openSheet("add");
 $("designsBtn").onclick = () => openSheet("designs");
@@ -1546,7 +1576,9 @@ function hideIntro() { $("intro").hidden = true; store.introSeen = true; save();
 load();
 $("gridBtn").setAttribute("aria-pressed", store.prefs.grid);
 $("zonesBtn").setAttribute("aria-pressed", store.prefs.zones);
-if (!store.introSeen) {
+const fromLink = openFromHash();
+if (fromLink) { store.introSeen = true; }
+else if (!store.introSeen) {
   const empty = store.designs.find(d => d.name === "Empty room");
   if (empty) { design = empty; store.currentId = empty.id; }
   $("intro").hidden = false;
