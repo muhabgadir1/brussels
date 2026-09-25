@@ -87,7 +87,7 @@ button{cursor:pointer}
 /* dock */
 .dock{background:var(--surface);border-top:1px solid var(--hair);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px))}
 .toolbar{display:flex;justify-content:space-between;gap:4px}
-.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;padding:6px 2px;border-radius:10px;font-size:12px;font-weight:600;color:var(--ink-2);min-height:48px}
+.tb{flex:1;min-width:0;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;padding:6px 0;border-radius:10px;font-size:11.5px;font-weight:600;color:var(--ink-2);min-height:48px}
 .tb svg{width:22px;height:22px}
 .tb.primary{color:var(--accent)}
 .tb:disabled{opacity:.35;cursor:default}
@@ -171,6 +171,20 @@ textarea{width:100%;min-height:90px;border:1px solid var(--hair);border-radius:1
 .switch[aria-checked="true"]{background:var(--accent)}
 .switch[aria-checked="true"]::after{transform:translateX(18px)}
 .issue-li{display:flex;gap:10px;align-items:flex-start}
+.thumb-lg{display:block;width:100%;max-width:240px;height:auto;margin:2px auto 12px;border-radius:10px;background:var(--bg)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;border:1px solid var(--hair);border-radius:12px;padding:12px;margin:0}
+.kv dt{color:var(--ink-3);font-weight:600}
+.kv dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+.rows{display:flex;flex-direction:column;border:1px solid var(--hair);border-radius:12px;overflow:hidden}
+.rows .r{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 12px;border-top:1px solid var(--hair);font-size:14px}
+.rows .r:first-child{border-top:0}
+.rows .r b{font-weight:600}
+.rows .r span{font:600 15px var(--font-c);color:var(--ink-2);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.rows .r small{grid-column:1/-1;color:var(--ink-3);font-size:13px}
+.rows .r.danger small{color:var(--danger)} .rows .r.warn small{color:var(--warn)}
+.badge{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:2px}
+.chev{width:18px;height:18px;color:var(--ink-3);flex:none}
+.saved-bad{color:var(--warn)}
 .issue-li .dot{width:9px;height:9px;border-radius:5px;margin-top:6px;flex:none}
 
 /* plan svg */
@@ -211,7 +225,7 @@ textarea{width:100%;min-height:90px;border:1px solid var(--hair);border-radius:1
 <div id="app">
   <header class="top">
     <button class="design-btn" id="designBtn" aria-label="Switch design">
-      <span class="eyebrow">Bedroom · <span id="roomSize">270 × 370 cm</span></span>
+      <span class="eyebrow"><span id="roomSize">270 × 370 cm</span> · <span id="savedAt">Saved</span></span>
       <span class="name"><span id="designName">Empty room</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></span>
     </button>
     <button class="chip" id="freeChip" title="Free floor"></button>
@@ -252,8 +266,9 @@ textarea{width:100%;min-height:90px;border:1px solid var(--hair);border-radius:1
   <footer class="dock" id="dock">
     <nav class="toolbar" id="toolbar">
       <button class="tb primary" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add</button>
-      <button class="tb" id="designsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>Designs</button>
-      <button class="tb" id="roomBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M14 20a6 6 0 0 1 6-6"/></svg>Room</button>
+      <button class="tb" id="saveBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>Save</button>
+      <button class="tb" id="designsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg>My rooms</button>
+      <button class="tb" id="roomBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v16H4z"/><path d="M14 20a6 6 0 0 1 6-6"/></svg>Walls</button>
       <button class="tb" id="undoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Undo</button>
       <button class="tb" id="redoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg>Redo</button>
     </nav>
@@ -411,9 +426,21 @@ let analysis = { byId: new Map(), list: [], door: 90 };
 function storageGet() { try { return localStorage.getItem(STORE_KEY); } catch (e) { return null; } }
 function storageSet(v) { try { localStorage.setItem(STORE_KEY, v); return true; } catch (e) { return false; } }
 let saveTimer = 0;
-function save() {
+function saveNow() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { if (design) design.updated = Date.now(); storageSet(JSON.stringify(store)); }, 300);
+  if (design) design.updated = Date.now();
+  const ok = storageSet(JSON.stringify(store));
+  const el = $("savedAt");
+  if (el) { el.textContent = ok ? `Saved ${when(design.updated)}` : "Not saved: storage blocked"; el.className = ok ? "" : "saved-bad"; }
+  return ok;
+}
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 300); }
+function when(ts) {
+  const d = new Date(ts), today = new Date().toDateString() === d.toDateString();
+  return today ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : d.toLocaleDateString([], { day: "numeric", month: "short" });
+}
+function blankRoom(w, l) {
+  return { w, l, door: { wall: "E", from: Math.max(0, l - 95), width: Math.min(80, l), hinge: "end", swing: "in" }, windows: [], radiators: [] };
 }
 function newDesign(name, items, room) {
   const d = { id: newId(), name, updated: Date.now(), room: clone(room || MEASURED_ROOM), items: items };
@@ -1360,10 +1387,11 @@ $("panel").addEventListener("change", e => {
 $("panel").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName === "INPUT") e.target.blur(); });
 
 /* ---------- sheets ---------- */
-let sheetKind = null;
-function openSheet(kind) {
-  sheetKind = kind;
-  $("sheetTitle").textContent = { add: "Add furniture", designs: "Designs", room: "Room measurements", issues: "What doesn't fit", share: "Share a design" }[kind];
+let sheetKind = null, sheetArg = null;
+function openSheet(kind, arg) {
+  sheetKind = kind; sheetArg = arg || null;
+  const dd = kind === "details" && store.designs.find(x => x.id === sheetArg);
+  $("sheetTitle").textContent = dd ? dd.name : { add: "Add furniture", designs: "My rooms", room: "Room measurements", issues: "What doesn't fit", share: "Share this room", save: "Save room" }[kind];
   renderSheet();
   $("sheet").hidden = false; $("backdrop").hidden = false;
 }
@@ -1393,13 +1421,13 @@ function glyphThumb(tpl) {
   const shape = it.shape === "round" ? `<ellipse class="item-shape f-${it.color}" rx="${it.w / 2}" ry="${it.d / 2}"/>` : `<rect class="item-shape f-${it.color}" x="${-it.w / 2}" y="${-it.d / 2}" width="${it.w}" height="${it.d}" rx="2"/>`;
   return `<svg class="glyph" viewBox="-22 -22 44 44" aria-hidden="true"><g transform="scale(${sc})">${shape}${glyphSVG(it)}</g></svg>`;
 }
-function designThumb(d) {
+function designThumb(d, cls) {
   const W = d.room.w, L = d.room.l;
   const items = d.items.map(it => {
     const shape = it.shape === "round" ? `<ellipse rx="${it.w / 2}" ry="${it.d / 2}"/>` : `<rect x="${-it.w / 2}" y="${-it.d / 2}" width="${it.w}" height="${it.d}"/>`;
     return `<g class="f-${it.color}" stroke="var(--item-stroke)" stroke-width="3" transform="translate(${it.x} ${it.y}) rotate(${it.rot})">${shape}</g>`;
   }).join("");
-  return `<svg class="thumb" viewBox="-20 -20 ${W + 40} ${L + 40}" aria-hidden="true"><rect width="${W}" height="${L}" fill="var(--floor)" stroke="var(--wall)" stroke-width="10"/>${items}</svg>`;
+  return `<svg class="${cls || "thumb"}" viewBox="-20 -20 ${W + 40} ${L + 40}" aria-hidden="true"><rect width="${W}" height="${L}" fill="var(--floor)" stroke="var(--wall)" stroke-width="10"/>${items}</svg>`;
 }
 function renderSheet() {
   const body = $("sheetBody");
@@ -1413,16 +1441,29 @@ function renderSheet() {
         <input id="cH" type="number" inputmode="numeric" placeholder="Height cm" aria-label="Height in cm">
       </div><div class="row"><button class="btn primary" id="cAdd">Add and check fit</button></div></div>`;
   } else if (sheetKind === "designs") {
-    body.innerHTML = `<div class="list">${store.designs.map(d => `<button class="li ${d.id === design.id ? "current" : ""}" data-open="${d.id}">${designThumb(d)}<span class="t"><b>${esc(d.name)}</b><small>${d.items.length} item${d.items.length === 1 ? "" : "s"} · ${new Date(d.updated).toLocaleDateString(undefined, { day: "numeric", month: "short" })}</small></span></button>`).join("")}</div>
-      <div class="sec">This design</div>
-      <div class="card"><div class="form"><input id="dName" value="${esc(design.name)}" aria-label="Design name" maxlength="50"></div>
-        <div class="row"><button class="btn" id="dDup">Duplicate</button><button class="btn" id="dShare">Share code</button><button class="btn danger" id="dDel">Delete</button></div>
-        <div id="dConfirm" hidden class="row"><span class="note">Delete “${esc(design.name)}”?</span><button class="btn danger" id="dDelYes">Delete</button><button class="btn" id="dDelNo">Keep</button></div></div>
-      <div class="sec">Start a new design</div>
+    const chev = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>';
+    body.innerHTML = `<div class="list">${store.designs.map(d => `<button class="li ${d.id === design.id ? "current" : ""}" data-open="${d.id}">${designThumb(d)}<span class="t"><b>${esc(d.name)}${d.id === design.id ? '<span class="badge">Open</span>' : ""}</b><small>${d.room.w} × ${d.room.l} cm · ${d.items.length} piece${d.items.length === 1 ? "" : "s"} · ${when(d.updated)}</small></span>${chev}</button>`).join("")}</div>
+      <p class="note">Tap a room to see its details. Rooms are saved in this browser${canLink() ? "; use Share link to open one on another device" : ""}.</p>
+      <div class="sec">New room</div>
+      <div class="card"><div class="form">
+        <input id="nbName" value="New room" aria-label="Room name" maxlength="50">
+        <input id="nbW" type="number" inputmode="numeric" value="300" aria-label="Width in cm" placeholder="Width cm">
+        <input id="nbL" type="number" inputmode="numeric" value="400" aria-label="Length in cm" placeholder="Length cm">
+      </div><div class="row"><button class="btn primary" id="nbCreate">Create empty room</button></div>
+      <p class="note" style="margin:0">Width × length in cm. It starts with a door; tap Walls to add windows and radiators.</p></div>
+      <div class="sec">Or start from this bedroom</div>
       <div class="list">${TEMPLATES.map(t => `<button class="li" data-tpl="${t.key}">${designThumb({ room: MEASURED_ROOM, items: t.items() })}<span class="t"><b>${esc(t.name)}</b><small>${esc(t.note || "Just the walls, door, windows and radiator")}</small></span></button>`).join("")}</div>
-      <div class="sec">Got a code from someone?</div>
-      <div class="card"><textarea id="impCode" placeholder="Paste a design code here" aria-label="Design code"></textarea><div class="row"><button class="btn primary" id="impBtn">Open code</button></div></div>
-      <p class="note">Designs save automatically in this browser.${storageGet() === null && !storageSet(JSON.stringify(store)) ? " Storage is blocked here, so they'll be lost when you close the page." : ""}</p>`;
+      <div class="sec">Got a link or code from someone?</div>
+      <div class="card"><textarea id="impCode" placeholder="Paste the link or code here" aria-label="Room link or code"></textarea><div class="row"><button class="btn primary" id="impBtn">Open it</button></div></div>`;
+  } else if (sheetKind === "details") {
+    const d = store.designs.find(x => x.id === sheetArg);
+    if (!d) { closeSheet(); return; }
+    body.innerHTML = detailsHTML(d);
+  } else if (sheetKind === "save") {
+    body.innerHTML = `<div class="card"><div class="form"><input id="svName" value="${esc(design.name)}" aria-label="Room name" maxlength="50"></div>
+      <div class="row"><button class="btn primary" id="svSave">Save</button><button class="btn" id="svNew">Save as a new room</button></div></div>
+      <p class="note">Saved rooms are listed under <b>My rooms</b>, with their measurements and furniture. Changes also save automatically as you work.</p>
+      ${canLink() ? `<p class="note">Rooms are kept in this browser. To open this room on another phone or computer, send yourself its link.</p><div class="row" style="margin-top:8px"><button class="btn" id="svLink">Share link</button></div>` : ""}`;
   } else if (sheetKind === "share") {
     const code = encodeDesign(design);
     body.innerHTML = (canLink() ? `<p class="note">Send this link. It opens “${esc(design.name)}” for them, and their changes won't affect yours.</p>
@@ -1465,19 +1506,42 @@ $("sheetBody").addEventListener("click", e => {
     addItem({ type: "box", name: $("cName").value.trim() || "New item", w, d, h, color: "sand" });
     return;
   }
-  if (b.dataset.open) { const d = store.designs.find(x => x.id === b.dataset.open); if (d) { openDesign(d); closeSheet(); } return; }
+  if (b.dataset.open) { openSheet("details", b.dataset.open); return; }
   if (b.dataset.tpl) {
     const t = TEMPLATES.find(x => x.key === b.dataset.tpl);
-    openDesign(newDesign(t.name, t.items())); closeSheet(); toast(`New design: ${t.name}`); return;
+    openDesign(newDesign(t.name, t.items())); closeSheet(); toast(`New room: ${t.name}`); return;
   }
-  if (b.id === "dDup") { const d = newDesign(design.name + " copy", clone(design.items).map(i => Object.assign(i, { id: newId() })), design.room); openDesign(d); closeSheet(); toast("Duplicated"); return; }
-  if (b.id === "dShare") { openSheet("share"); return; }
-  if (b.id === "dDel") { $("dConfirm").hidden = false; return; }
-  if (b.id === "dDelNo") { $("dConfirm").hidden = true; return; }
-  if (b.id === "dDelYes") {
-    store.designs = store.designs.filter(d => d !== design);
-    if (!store.designs.length) newDesign("Empty room", []);
-    openDesign(store.designs[0]); closeSheet(); toast("Design deleted"); return;
+  if (b.id === "nbCreate") {
+    const w = Math.round(+$("nbW").value), l = Math.round(+$("nbL").value);
+    if (!(w >= 100 && w <= 1500 && l >= 100 && l <= 1500)) { toast("Enter a width and length between 100 and 1500 cm"); return; }
+    openDesign(newDesign($("nbName").value.trim() || "New room", [], blankRoom(w, l))); closeSheet(); saveNow();
+    toast("Room created. Tap Walls to add windows and radiators."); return;
+  }
+  // save sheet
+  if (b.id === "svSave") { design.name = $("svName").value.trim() || design.name; saveNow(); renderChrome(); closeSheet(); toast(`Saved “${design.name}” to My rooms`); return; }
+  if (b.id === "svNew") {
+    const name = $("svName").value.trim() || design.name + " copy";
+    openDesign(newDesign(name, clone(design.items).map(i => Object.assign(i, { id: newId() })), clone(design.room))); saveNow(); closeSheet();
+    toast(`Saved as a new room: “${name}”`); return;
+  }
+  if (b.id === "svLink") { shareLink(design); return; }
+  // details sheet
+  const dd = store.designs.find(x => x.id === sheetArg);
+  if (sheetKind === "details" && dd) {
+    if (b.id === "dtOpen") { if (dd.id !== design.id) openDesign(dd); closeSheet(); return; }
+    if (b.id === "dtLink") { shareLink(dd); return; }
+    if (b.id === "dtCode") { copyText(encodeDesign(dd), "Code copied"); return; }
+    if (b.id === "dtCopy") { copyText($("dtText").value, "Details copied", $("dtText")); return; }
+    if (b.id === "dtDup") { const c = newDesign(dd.name + " copy", clone(dd.items).map(i => Object.assign(i, { id: newId() })), clone(dd.room)); saveNow(); openSheet("details", c.id); toast("Duplicated"); return; }
+    if (b.id === "dtDel") { $("dtConfirm").hidden = false; return; }
+    if (b.id === "dtDelNo") { $("dtConfirm").hidden = true; return; }
+    if (b.id === "dtDelYes") {
+      const wasOpen = dd.id === design.id, name = dd.name;
+      store.designs = store.designs.filter(x => x !== dd);
+      if (!store.designs.length) newDesign("Empty room", []);
+      if (wasOpen) openDesign(store.designs[0]); else saveNow();
+      openSheet("designs"); toast(`Deleted “${name}”`); return;
+    }
   }
   if (b.id === "impBtn") {
     const d = decodeDesign($("impCode").value);
@@ -1507,7 +1571,11 @@ $("sheetBody").addEventListener("click", e => {
 });
 $("sheetBody").addEventListener("change", e => {
   const id = e.target.id; if (!id) return;
-  if (id === "dName") { const v = e.target.value.trim(); if (v) { design.name = v; save(); renderChrome(); } return; }
+  if (id === "dtName") {
+    const d = store.designs.find(x => x.id === sheetArg), v = e.target.value.trim();
+    if (d && v) { d.name = v; $("sheetTitle").textContent = v; saveNow(); renderChrome(); toast("Renamed"); }
+    return;
+  }
   if (sheetKind !== "room") return;
   const r = design.room, v = e.target.value, n = Math.max(0, Math.round(Number(v) || 0));
   const clampOn = (o, lenKey) => { const L = wallLen(r, o.wall); o[lenKey] = Math.min(o[lenKey], L); o.from = Math.min(Math.max(0, o.from), L - o[lenKey]); };
@@ -1522,6 +1590,73 @@ $("sheetBody").addEventListener("change", e => {
   });
   if (view.auto) fitView();
 });
+
+/* ---------- room details ---------- */
+const WALLNAME = { N: "top wall", E: "right wall", S: "bottom wall", W: "left wall" };
+const alongPhrase = (wall, from) => `${r0(from)} cm from the ${wall === "N" || wall === "S" ? "left" : "top"}`;
+function withDesign(d, fn) {
+  const keepD = design, keepA = analysis;
+  design = d; analyze();
+  try { return fn(); } finally { design = keepD; analysis = keepA; }
+}
+function roomFacts(d) {
+  return withDesign(d, () => {
+    const r = d.room, fa = freeArea(), an = analysis;
+    const door = `${WALLNAME[r.door.wall]}, ${alongPhrase(r.door.wall, r.door.from)}, ${r.door.width} cm wide, ${r.door.swing === "out" ? "opens outward" : an.door >= 88 ? "opens fully" : `opens ${an.door}°`}`;
+    const fixturesList = [["Door", door]]
+      .concat(r.windows.map((w, i) => [`Window ${i + 1}`, `${WALLNAME[w.wall]}, ${alongPhrase(w.wall, w.from)}, ${w.width} cm wide, sill ${w.sill} cm`]))
+      .concat(r.radiators.map((x, i) => [`Radiator ${i + 1}`, `${WALLNAME[x.wall]}, ${alongPhrase(x.wall, x.from)}, ${x.length} × ${x.depth} cm, ${x.height} cm high`]));
+    const items = d.items.map(it => {
+      const b = aabb(itemPoly(it)), iss = an.byId.get(it.id) || [];
+      return { it, size: `${r0(it.w)} × ${r0(it.d)}${it.h > 1 ? ` × ${r0(it.h)}` : ""}`, pos: `${r0(b[0])} cm from left, ${r0(b[1])} cm from top${it.rot ? `, turned ${r0(it.rot)}°` : ""}`, iss };
+    });
+    return { r, fa, fixturesList, items, issues: an.list.map(i => ({ ...i, name: (d.items.find(x => x.id === i.id) || {}).name })) };
+  });
+}
+function detailsHTML(d) {
+  const f = roomFacts(d), dn = f.issues.filter(i => i.sev === "danger").length;
+  const isOpen = d.id === design.id;
+  return `${designThumb(d, "thumb-lg")}
+    <div class="form" style="margin-bottom:10px"><input id="dtName" value="${esc(d.name)}" aria-label="Room name" maxlength="50"></div>
+    <dl class="kv">
+      <dt>Room</dt><dd>${f.r.w} × ${f.r.l} cm · ${(f.r.w * f.r.l / 1e4).toFixed(2)} m²</dd>
+      <dt>Free floor</dt><dd>${f.fa.free.toFixed(1)} m²</dd>
+      <dt>Furniture</dt><dd>${f.items.length} piece${f.items.length === 1 ? "" : "s"}</dd>
+      <dt>Fit</dt><dd style="color:var(--${f.issues.length ? (dn ? "danger" : "warn") : "ok"})">${f.issues.length ? `${f.issues.length} issue${f.issues.length === 1 ? "" : "s"}` : "Everything fits"}</dd>
+      <dt>Saved</dt><dd>${new Date(d.updated).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</dd>
+    </dl>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="dtOpen">${isOpen ? "Back to the plan" : "Open this room"}</button>
+      ${canLink() ? `<button class="btn" id="dtLink">Share link</button>` : `<button class="btn" id="dtCode">Copy code</button>`}
+      <button class="btn" id="dtCopy">Copy details</button></div>
+    <div class="sec">Door, windows and radiators</div>
+    <div class="rows">${f.fixturesList.map(([n, t]) => `<div class="r"><b>${n}</b><small>${esc(t)}</small></div>`).join("")}</div>
+    <div class="sec">Furniture</div>
+    ${f.items.length ? `<div class="rows">${f.items.map(x => `<div class="r ${x.iss.some(i => i.sev === "danger") ? "danger" : x.iss.length ? "warn" : ""}"><b>${esc(x.it.name)}</b><span>${x.size}</span><small>${esc(x.pos)}${x.iss.length ? ` · ${esc(x.iss[0].text)}` : ""}</small></div>`).join("")}</div>` : `<p class="note">No furniture yet.</p>`}
+    <textarea id="dtText" readonly hidden>${esc(detailsText(d, f))}</textarea>
+    <div class="sec">Manage</div>
+    <div class="row"><button class="btn" id="dtDup">Duplicate</button><button class="btn danger" id="dtDel">Delete</button></div>
+    <div id="dtConfirm" hidden class="row" style="margin-top:8px"><span class="note" style="margin:0">Delete “${esc(d.name)}” for good?</span><button class="btn danger" id="dtDelYes">Delete</button><button class="btn" id="dtDelNo">Keep</button></div>`;
+}
+function detailsText(d, f) {
+  f = f || roomFacts(d);
+  const lines = [`${d.name}`, `Room: ${f.r.w} × ${f.r.l} cm (${(f.r.w * f.r.l / 1e4).toFixed(2)} m²), ${f.fa.free.toFixed(1)} m² free floor`];
+  f.fixturesList.forEach(([n, t]) => lines.push(`${n}: ${t}`));
+  lines.push("", "Furniture (width × depth × height, cm):");
+  if (!f.items.length) lines.push("- none");
+  f.items.forEach(x => lines.push(`- ${x.it.name}: ${x.size} — ${x.pos}`));
+  if (f.issues.length) { lines.push("", "Doesn't fit yet:"); f.issues.forEach(i => lines.push(`- ${i.name}: ${i.text}`)); }
+  if (canLink()) lines.push("", `Open it: ${shareURL(encodeDesign(d))}`);
+  return lines.join("\n");
+}
+function copyText(text, okMsg, fallbackEl) {
+  const fallback = () => { if (fallbackEl) { fallbackEl.hidden = false; fallbackEl.focus(); fallbackEl.select(); } toast("Selected. Copy it from here."); };
+  try { navigator.clipboard.writeText(text).then(() => toast(okMsg), fallback); } catch (e) { fallback(); }
+}
+function shareLink(d) {
+  const url = shareURL(encodeDesign(d));
+  if (navigator.share) navigator.share({ title: d.name, text: `${d.name}: room layout`, url }).catch(err => { if (err && err.name !== "AbortError") copyText(url, "Link copied"); });
+  else copyText(url, "Link copied");
+}
 
 /* ---------- share codes ---------- */
 function encodeDesign(d) {
@@ -1560,7 +1695,8 @@ window.addEventListener("hashchange", () => { closeSheet(); openFromHash(); });
 /* ---------- wiring ---------- */
 $("addBtn").onclick = () => openSheet("add");
 $("designsBtn").onclick = () => openSheet("designs");
-$("designBtn").onclick = () => openSheet("designs");
+$("designBtn").onclick = () => openSheet("details", design.id);
+$("saveBtn").onclick = () => openSheet("save");
 $("roomBtn").onclick = () => select("room");
 $("issueChip").onclick = () => openSheet("issues");
 $("freeChip").onclick = () => toast($("freeChip").title);
@@ -1584,6 +1720,7 @@ else if (!store.introSeen) {
   $("intro").hidden = false;
 }
 fullRender();
+saveNow();
 requestAnimationFrame(fitView);
 </script>
 </body>

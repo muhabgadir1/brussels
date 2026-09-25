@@ -13,7 +13,9 @@ Open `index.html` in any browser (no build step, no install).
 - Door panel: flip the hinge side or make it open outward. Room panel: resize the room, add windows or radiators.
 - Red = doesn't physically fit (overlaps, sticks out of the room, blocks the door). Amber = fits, but a door, drawers, a window or a desk chair won't have room.
 - Blue numbers show the gap in cm to the nearest wall or piece of furniture.
-- **Designs** keeps several layouts (saved in each person's own browser). **Share** gives you a link that opens your layout for someone else; their edits don't change yours.
+- **Save** names the room you're working on; changes also save automatically. **My rooms** lists every saved room; tap one for its details (size, door, windows, radiators, each piece of furniture with its size and position, what doesn't fit), then open, share, copy the details as text, duplicate or delete it.
+- **My rooms → New room** starts an empty room of any size.
+- Rooms are stored in each person's own browser. **Share link** gives a link that opens a room on any device; the other person's edits don't change yours.
 
 Measurements from the sketch: room 270 × 370 cm, radiator 140 cm on the bottom wall with 130 cm to the door corner, bed 140 × 200.
 The window and door positions are estimated from the video and can be moved and resized directly on the plan.
